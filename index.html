@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f2227">
+<title>Marteo CRM</title>
+<style>
+:root{--bg:#f5f4f0;--card:#fff;--ink:#1d2127;--muted:#6b7280;--line:#e7e5df;--dark:#1f2227;--gold:#b8892b;--gold-d:#8f6a1f;--gold-s:#f6ecd3;--red:#c0392b;--green:#2f7d4f;--r:14px}
+*{box-sizing:border-box;margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+#app{display:flex;min-height:100vh}
+.side{width:236px;background:var(--dark);color:#b9bdc6;display:flex;flex-direction:column;padding:22px 14px;position:sticky;top:0;height:100vh;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 10px 24px;font-weight:700;color:#fff;font-size:17px}
+.brand i{width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#dcb050,#a97b22);display:grid;place-items:center;color:#1f2227;font-style:normal;font-weight:800}
+.side nav{display:flex;flex-direction:column;gap:4px;flex:1}
+.side a{display:flex;gap:12px;align-items:center;padding:11px 12px;border-radius:10px;cursor:pointer;font-weight:500}
+.side a:hover{background:#292d33}
+.side a.on{background:#2d3138;color:#fff}.side a.on svg{stroke:var(--gold)}
+.me{border-top:1px solid #343840;padding:14px 10px 0;font-size:13px;display:flex;justify-content:space-between;align-items:center;color:#d9dbe0}
+.me button{background:none;border:0;color:#9aa0ab;cursor:pointer;font-size:13px}
+main{flex:1;min-width:0;padding:30px 34px 40px;max-width:1240px}
+.bottom{display:none;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:6px 2px calc(6px + env(safe-area-inset-bottom));z-index:20}
+.bottom a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--muted);padding:4px 0;cursor:pointer}
+.bottom a.on{color:var(--gold-d)}.bottom a.on svg{stroke:var(--gold)}
+h1{font-size:25px;letter-spacing:-.3px}h2{font-size:17px}h3{font-size:15px}
+.sub{color:var(--muted);margin-top:2px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:22px}
+.kpi small{color:var(--muted);font-size:12.5px;display:block}.kpi b{font-size:25px;letter-spacing:-.5px;display:block;margin-top:3px}
+.kpi.gold{background:var(--dark);border-color:var(--dark);color:#fff}.kpi.gold small{color:#b9bdc6}.kpi.gold b{color:#e6bf64}
+.cols{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
+.sec-h{display:flex;justify-content:space-between;align-items:center;margin:0 0 12px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);white-space:nowrap}
+.btn:hover{background:#faf9f6}.btn.sm{padding:8px 12px;font-size:13.5px}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#fff}.btn.gold:hover{background:var(--gold-d)}
+.btn.wa{background:#25a244;border-color:#25a244;color:#fff}.btn.wa:hover{background:#1e8a39}
+.btn.ghost{background:transparent}.btn.danger{color:var(--red);border-color:#efc9c4}
+.chip{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;white-space:nowrap}
+.tag{font-size:12px;color:var(--muted);background:#f0eee8;border-radius:6px;padding:2px 8px}
+.due{font-size:12.5px;color:var(--muted);white-space:nowrap}.due.late{color:var(--red);font-weight:700}.due.today{color:var(--gold-d);font-weight:700}
+.toca{border:1px solid var(--line);border-left:4px solid var(--gold);background:#fff;border-radius:12px;padding:14px;margin-bottom:10px}
+.toca.late{border-left-color:var(--red)}
+.t-h{display:flex;justify-content:space-between;gap:10px}.t-h small{display:block;color:var(--muted)}
+.msg{background:#f8f6f0;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:14px;white-space:pre-wrap}
+.t-a{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.toolbar input,.toolbar select,.fld input,.fld select,.fld textarea{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;width:100%}
+.toolbar input{flex:1;min-width:180px}.toolbar select{width:auto;min-width:130px}
+.item{display:flex;align-items:center;gap:12px;padding:13px 14px;background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer;flex-wrap:wrap}
+.item:hover{border-color:#d5ceb9}
+.i-main{flex:1;min-width:160px}.i-main small{display:block;color:var(--muted)}
+.empty{color:var(--muted);text-align:center;padding:26px 10px}
+.board{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;align-items:flex-start}
+.kcol{min-width:258px;width:258px;background:#ebe9e3;border-radius:var(--r);padding:10px;flex-shrink:0}
+.kcol.over{outline:2px dashed var(--gold)}
+.k-h{display:flex;justify-content:space-between;align-items:center;padding:4px 6px 10px;font-weight:700;font-size:13.5px}
+.k-h span.n{background:#fff;border-radius:99px;padding:1px 9px;font-size:12px}
+.kcard{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px;margin-bottom:8px;cursor:grab}
+.kcard.late{border-color:#e7b5ae;background:#fff6f4}.kcard.today{border-color:#e2cb94;background:#fffbf0}.kcard.drag{opacity:.4}
+.kcard small{display:block;color:var(--muted)}.kcard .row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:6px}
+.kcard select{border:1px solid var(--line);border-radius:8px;padding:4px 6px;font-size:12px;max-width:110px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.cli{cursor:pointer}.cli:hover{border-color:#d5ceb9}
+.c-h,.c-f,.c-m{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.c-m{font-size:12.5px;color:var(--muted)}.c-f{margin:8px 0 2px;font-weight:600;font-size:14px}
+.prog{height:8px;background:#eeece6;border-radius:99px;margin:12px 0 6px;overflow:hidden}.prog i{display:block;height:100%;background:linear-gradient(90deg,#d6a945,var(--gold));border-radius:99px}
+.bar{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13.5px}.b-l{width:96px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.b-t{flex:1;height:12px;background:#eeece6;border-radius:99px;overflow:hidden}.b-t i{display:block;height:100%;background:var(--gold);border-radius:99px}.b-v{width:70px;text-align:right;font-weight:600}
+.grp{margin-bottom:20px}.grp h3{margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.ov{position:fixed;inset:0;background:rgba(20,22,26,.5);display:flex;justify-content:flex-end;z-index:50}
+.sheet{background:#fff;width:min(580px,100%);height:100%;overflow:auto;padding:22px 22px 40px}
+.sh-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px}
+.x{background:#f0eee8;border:0;width:34px;height:34px;border-radius:99px;cursor:pointer;font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.fld{display:block;margin-bottom:12px}.fld span{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.hist{border-top:1px solid var(--line);margin-top:10px;padding-top:14px}.hist ul{list-style:none;padding:0;margin:10px 0 0;max-height:260px;overflow:auto}.hist li{padding:8px 0;border-bottom:1px solid #f0eee8;font-size:14px}
+.hist .add{display:flex;gap:8px}.hist .add select{width:auto}.hist .add input,.hist .add select{border:1px solid var(--line);border-radius:10px;padding:9px 10px}.hist .add input{flex:1;min-width:0}
+.task{display:flex;gap:10px;align-items:center;padding:7px 0;font-size:14.5px}.task input{width:18px;height:18px;accent-color:var(--gold)}
+.task.done span{text-decoration:line-through;color:var(--muted)}
+.muted{color:var(--muted)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;z-index:99;display:flex;flex-direction:column;gap:8px;align-items:center}
+#toast div{background:#22252a;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}#toast div.err{background:var(--red)}
+#login{min-height:100vh;display:grid;place-items:center;padding:20px;background:var(--dark)}
+.lg{background:#fff;border-radius:20px;padding:32px;width:min(400px,100%)}
+.lg .brand{color:var(--ink);padding:0 0 18px}.lg .fld{margin-bottom:14px}.err-t{color:var(--red);font-size:14px;margin-bottom:10px}
+.demo-b{background:var(--gold-s);color:var(--gold-d);padding:8px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;font-weight:600}
+@media(max-width:860px){input,select,textarea{font-size:16px!important}.side{display:none}.bottom{display:flex}main{padding:20px 14px 100px}.cols{grid-template-columns:1fr}h1{font-size:22px}.grid2{grid-template-columns:1fr}.toolbar select{flex:1}}
+</style>
+</head>
+<body>
+
+<div id="login" hidden>
+  <form class="lg" id="loginForm">
+    <div class="brand"><i>M</i>Marteo CRM</div>
+    <label class="fld"><span>¿Cómo te llamas?</span><input name="nombre" placeholder="Ricardo" autocomplete="given-name"></label>
+    <label class="fld"><span>Contraseña</span><input name="pw" type="password" autocomplete="current-password" required></label>
+    <div class="err-t" id="loginErr" hidden></div>
+    <button class="btn gold" style="width:100%;justify-content:center" type="submit">Entrar</button>
+    <button class="btn ghost" style="width:100%;justify-content:center;margin-top:10px" type="button" data-a="demo">Ver demo con datos de ejemplo</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <aside class="side">
+    <div class="brand"><i>M</i>Marteo CRM</div>
+    <nav id="navSide"></nav>
+    <div class="me"><span id="meName"></span><button data-a="logout">Salir</button></div>
+  </aside>
+  <main id="main"></main>
+</div>
+<nav class="bottom" id="navBottom" hidden></nav>
+
+<div id="modal"></div>
+<div id="toast"></div>
+<input type="file" id="csvIn" accept=".csv,text/csv" hidden>
+
+<script>
+'use strict';
+/* ============ utilidades ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const iso = d => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const hoy = () => iso(new Date());
+const addDays = (n, from) => { const d = from ? new Date(from + 'T12:00:00') : new Date(); d.setDate(d.getDate() + n); return iso(d); };
+const fmtD = s => s ? s.slice(8, 10) + '/' + s.slice(5, 7) + '/' + s.slice(0, 4) : '—';
+const eurF = new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', useGrouping: 'always' });
+const eur = n => eurF.format(+n || 0);
+const dd = s => Math.round((new Date(s + 'T12:00:00') - new Date(hoy() + 'T12:00:00')) / 864e5);
+const normTel = s => { let d = String(s || '').replace(/\D/g, ''); if (d.startsWith('0034')) d = d.slice(4); else if (d.startsWith('34') && d.length === 11) d = d.slice(2); return d; };
+const num = v => { v = String(v == null ? '' : v).trim().replace(',', '.'); return v === '' || isNaN(+v) ? null : +v; };
+const dueCls = s => { if (!s) return ''; const n = dd(s); return n < 0 ? 'late' : n === 0 ? 'today' : ''; };
+const dueLbl = s => { if (!s) return 'Sin fecha'; const n = dd(s); if (n < 0) return 'Atrasado · ' + fmtD(s).slice(0, 5); if (n === 0) return 'Hoy'; if (n === 1) return 'Mañana'; return fmtD(s).slice(0, 5); };
+const waLink = (tel, msg) => { let t = normTel(tel); if (t.length === 9) t = '34' + t; return 'https://wa.me/' + t + (msg ? '?text=' + encodeURIComponent(msg) : ''); };
+
+/* ============ constantes ============ */
+const ESTADOS = [
+  { k: 'Nuevo', l: 'Prospecto', c: '#64748b' },
+  { k: 'Contactado', l: 'Contactado', c: '#2563eb' },
+  { k: 'Conversacion', l: 'En conversación', c: '#7c3aed' },
+  { k: 'Propuesta', l: 'Propuesta enviada', c: '#d97706' },
+  { k: 'Ganado', l: 'Ganado', c: '#16a34a' },
+  { k: 'Perdido', l: 'Perdido', c: '#dc2626' },
+  { k: 'Frio', l: 'Frío', c: '#0891b2' }
+];
+const ACTIVOS = ['Nuevo', 'Contactado', 'Conversacion', 'Propuesta'];
+const PRODUCTOS = ['booking', 'facturas', 'resenas', 'web'];
+const ORIGENES = ['Apify', 'CSV', 'Telegram', 'Instagram', 'Recomendación', 'Web', 'Visita', 'Manual', 'Otro'];
+const ESTADOS_CLI = ['Onboarding', 'Activo', 'Pausado', 'Baja'];
+const PAGOS = [['Pendiente', 'Pendiente'], ['Parcial', 'Pagado a medias'], ['Pagado', 'Pagado']];
+const NAV = [
+  ['inicio', 'Inicio', '<path d="M3 11l9-8 9 8M5 10v10h14V10"/>'],
+  ['leads', 'Leads', '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 6.5-6s6 2 6.5 6M16 4.5a3.5 3.5 0 010 7M18.5 14c2 .7 3 2.8 3.2 5"/>'],
+  ['tablero', 'Tablero', '<rect x="3" y="4" width="5" height="16" rx="1.5"/><rect x="10" y="4" width="5" height="10" rx="1.5"/><rect x="17" y="4" width="4" height="13" rx="1.5"/>'],
+  ['clientes', 'Clientes', '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M3 13h18"/>'],
+  ['agenda', 'Agenda', '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'],
+  ['informes', 'Informes', '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>']
+];
+const estInfo = k => ESTADOS.find(e => e.k === k) || ESTADOS[0];
+const chip = k => { const e = estInfo(k || 'Nuevo'); return `<span class="chip" style="background:${e.c}1a;color:${e.c}">${esc(e.l)}</span>`; };
+const cChip = k => { const m = { Onboarding: '#d97706', Activo: '#16a34a', Pausado: '#64748b', Baja: '#dc2626' }, c = m[k] || '#64748b'; return `<span class="chip" style="background:${c}1a;color:${c}">${esc(k || '—')}</span>`; };
+const pChip = k => { const m = { Pendiente: ['#d97706', 'Pago pendiente'], Parcial: ['#2563eb', 'Pagado a medias'], Pagado: ['#16a34a', 'Pagado'] }, v = m[k] || m.Pendiente; return `<span class="chip" style="background:${v[0]}1a;color:${v[0]}">${v[1]}</span>`; };
+
+/* ============ estado y capa de datos ============ */
+const store = { key: localStorage.getItem('crm_key') || '', demo: false, prospectos: [], clientes: [] };
+const state = { view: 'inicio', f: { q: '', estado: '', producto: '', origen: '' } };
+const norm = r => Object.assign({ id: r.id }, r.fields);
+
+function demoSeed() {
+  const t = hoy(), p = (f) => ({ id: 'd' + Math.random().toString(36).slice(2, 8), fields: f });
+  const msg = (n) => 'Hola, vi ' + n + ' en Google. ¿Cómo gestionáis ahora las citas, por teléfono?';
+  return {
+    Prospectos: [
+      p({ Nombre: 'Barbería El Corte', Telefono: '612345678', Categoria: 'Barbería', Ciudad: 'Barcelona', Producto: 'booking', Origen: 'Apify', Estado: 'Nuevo', Contactos: 0, Proximo_Followup: t, Msg_WhatsApp: msg('vuestra barbería'), Fecha_Alta: addDays(-1) }),
+      p({ Nombre: 'Salón Luna', Telefono: '623456789', Categoria: 'Peluquería', Ciudad: 'Badalona', Producto: 'booking', Origen: 'Apify', Estado: 'Contactado', Contactos: 1, Proximo_Followup: addDays(-1), Notas: fmtD(addDays(-4)) + ': [Mensaje] Primer contacto', Fecha_Alta: addDays(-4) }),
+      p({ Nombre: 'Uñas Beauty Lab', Telefono: '634567890', Categoria: 'Centro de uñas', Ciudad: 'Barcelona', Producto: 'booking', Origen: 'Instagram', Estado: 'Conversacion', Contactos: 2, Proximo_Followup: addDays(1), Fecha_Alta: addDays(-8) }),
+      p({ Nombre: 'Reformas García', Telefono: '645678901', Categoria: 'Reformas', Ciudad: 'Sabadell', Producto: 'facturas', Origen: 'Recomendación', Estado: 'Propuesta', Contactos: 3, Proximo_Followup: t, Fecha_Alta: addDays(-12) }),
+      p({ Nombre: 'Clínica Dental Sonrisa', Telefono: '656789012', Categoria: 'Clínica dental', Ciudad: 'Terrassa', Producto: 'booking', Origen: 'Apify', Estado: 'Nuevo', Contactos: 0, Proximo_Followup: t, Fecha_Alta: t }),
+      p({ Nombre: 'Barbería Vintage', Telefono: '667890123', Categoria: 'Barbería', Ciudad: 'Barcelona', Producto: 'booking', Origen: 'Visita', Estado: 'Ganado', Contactos: 4, Fecha_Alta: addDays(-30) }),
+      p({ Nombre: 'Detailing Pro', Telefono: '678901234', Categoria: 'Detailing', Ciudad: 'Mataró', Producto: 'booking', Origen: 'Apify', Estado: 'Perdido', Contactos: 3, Fecha_Alta: addDays(-25) }),
+      p({ Nombre: 'Peluquería Marta', Telefono: '689012345', Categoria: 'Peluquería', Ciudad: 'Barcelona', Producto: 'booking', Origen: 'Apify', Estado: 'Contactado', Contactos: 2, Proximo_Followup: t, Fecha_Alta: addDays(-9) }),
+      p({ Nombre: 'Constructora Ruiz', Telefono: '690123456', Categoria: 'Construcción', Ciudad: 'Granollers', Producto: 'facturas', Origen: 'Web', Estado: 'Conversacion', Contactos: 2, Proximo_Followup: addDays(2), Fecha_Alta: addDays(-6) }),
+      p({ Nombre: 'Centro Estética Aura', Telefono: '601234567', Categoria: 'Estética', Ciudad: 'Barcelona', Producto: 'booking', Origen: 'Instagram', Estado: 'Frio', Contactos: 3, Fecha_Alta: addDays(-20) })
+    ],
+    Clientes: [
+      p({ Negocio: 'Barbería Vintage', Contacto: 'Pedro', Telefono: '667890123', Ciudad: 'Barcelona', Producto: 'booking', Estado: 'Activo', Setup: 799, Mensualidad: 99, Pago: 'Pagado', Fecha_Inicio: addDays(-12), Fecha_Entrega: addDays(-5), Proximo_Cobro: addDays(18), Tareas: '[x] Recibir material\n[x] Configurar asistente\n[x] Probar reservas\n[x] Puesta en marcha\n[x] Cobrar instalación' }),
+      p({ Negocio: 'Reformas Vidal', Contacto: 'Jordi', Telefono: '611222333', Ciudad: 'Sabadell', Producto: 'facturas', Estado: 'Onboarding', Setup: 750, Mensualidad: 120, Pago: 'Parcial', Fecha_Inicio: addDays(-3), Fecha_Entrega: addDays(5), Proximo_Cobro: addDays(27), Tareas: '[x] Recibir facturas de ejemplo\n[ ] Configurar categorías y informe\n[ ] Probar con 10 facturas\n[ ] Puesta en marcha\n[ ] Cobrar instalación' }),
+      p({ Negocio: 'Taller Motor Plus', Contacto: 'Laura', Telefono: '622333444', Ciudad: 'Mataró', Producto: 'booking', Estado: 'Activo', Setup: 799, Mensualidad: 99, Pago: 'Pagado', Fecha_Inicio: addDays(-45), Fecha_Entrega: addDays(-38), Proximo_Cobro: addDays(2), Tareas: '[x] Recibir material\n[x] Configurar\n[x] Puesta en marcha' })
+    ]
+  };
+}
+const demoLoad = () => { try { const j = JSON.parse(localStorage.getItem('crm_demo_db')); if (j && j.Prospectos) return j; } catch (e) {} const s = demoSeed(); localStorage.setItem('crm_demo_db', JSON.stringify(s)); return s; };
+const demoSave = db => localStorage.setItem('crm_demo_db', JSON.stringify(db));
+function demoCall(method, table, o) {
+  o = o || {}; const db = demoLoad(); const rows = db[table]; const body = o.body || {};
+  const mk = f => ({ id: 'd' + Math.random().toString(36).slice(2, 9), fields: Object.assign({}, f) });
+  if (method === 'GET') return Promise.resolve({ records: rows });
+  if (method === 'POST') { const list = body.records || [{ fields: body.fields }]; const out = list.map(x => { const r = mk(x.fields); rows.push(r); return r; }); demoSave(db); return Promise.resolve(body.records ? { records: out } : out[0]); }
+  if (method === 'PATCH') { const r = rows.find(x => x.id === o.id); Object.assign(r.fields, body.fields); Object.keys(r.fields).forEach(k => { if (r.fields[k] === null) delete r.fields[k]; }); demoSave(db); return Promise.resolve(r); }
+  if (method === 'DELETE') { db[table] = rows.filter(x => x.id !== o.id); demoSave(db); return Promise.resolve({ deleted: true }); }
+}
+async function call(method, table, o) {
+  o = o || {};
+  if (store.demo) return demoCall(method, table, o);
+  const r = await fetch('/api/records?table=' + table + (o.id ? '&id=' + o.id : ''), { method, headers: { 'content-type': 'application/json', 'x-crm-key': store.key }, body: o.body ? JSON.stringify(o.body) : undefined });
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 401) { const e = new Error('Contraseña incorrecta'); e.auth = true; throw e; }
+  if (!r.ok) { const m = j.error && (typeof j.error === 'string' ? j.error : j.error.message); throw new Error(m || 'Error ' + r.status); }
+  return j;
+}
+async function loadAll() {
+  const p = await call('GET', 'Prospectos'); store.prospectos = p.records.map(norm);
+  try { const c = await call('GET', 'Clientes'); store.clientes = c.records.map(norm); }
+  catch (e) { if (e.auth) throw e; store.clientes = []; toast('No puedo leer la tabla Clientes: ' + e.message, 'err'); }
+}
+async function savePros(id, fields) { const r = await call('PATCH', 'Prospectos', { id, body: { fields } }); const i = store.prospectos.findIndex(x => x.id === id); store.prospectos[i] = norm(r); return store.prospectos[i]; }
+async function saveCli(id, fields) { const r = await call('PATCH', 'Clientes', { id, body: { fields } }); const i = store.clientes.findIndex(x => x.id === id); store.clientes[i] = norm(r); return store.clientes[i]; }
+
+/* ============ lógica de negocio ============ */
+function accionDe(p) { const n = +p.Contactos || 0, e = p.Estado || 'Nuevo'; if (e === 'Nuevo') return 'Primer contacto'; if (e === 'Contactado' && n <= 1) return 'Seguimiento 1'; if (e === 'Contactado') return 'Cierre amable'; if (e === 'Conversacion') return 'Retomar conversación'; return 'Seguimiento propuesta'; }
+const tocaHoy = () => { const t = hoy(); return store.prospectos.filter(p => ACTIVOS.includes(p.Estado || 'Nuevo') && p.Proximo_Followup && p.Proximo_Followup <= t).sort((a, b) => a.Proximo_Followup.localeCompare(b.Proximo_Followup)); };
+const addNota = (old, tipo, txt) => fmtD(hoy()) + ': [' + tipo + '] ' + txt + (old ? '\n' + old : '');
+const tasksOf = s => String(s || '').split('\n').map(l => l.trim()).filter(Boolean).map(l => ({ d: /^\[x\]/i.test(l), t: l.replace(/^\[[ xX]\]\s*/, '') }));
+const tasksStr = a => a.map(x => (x.d ? '[x] ' : '[ ] ') + x.t).join('\n');
+const defaultTasks = p => ({ booking: ['Recibir material del cliente', 'Configurar el asistente y el calendario', 'Probar con 5 reservas de prueba', 'Formar al cliente (10 min)', 'Puesta en marcha', 'Cobrar instalación'], facturas: ['Recibir facturas de ejemplo', 'Configurar categorías y el informe', 'Probar con 10 facturas reales', 'Puesta en marcha', 'Cobrar instalación'], resenas: ['Recibir enlace de Google Business', 'Encargar las tarjetas', 'Entregar tarjetas', 'Cobrar'], web: ['Recibir textos y fotos', 'Diseño de la web', 'Revisión con el cliente', 'Publicación', 'Cobrar'] }[p] || ['Recibir material', 'Configurar', 'Probar', 'Puesta en marcha', 'Cobrar']).map(t => '[ ] ' + t).join('\n');
+
+async function hecho(id) {
+  const p = store.prospectos.find(x => x.id === id), a = accionDe(p);
+  const f = { Contactos: (+p.Contactos || 0) + 1, Ultimo_Contacto: hoy(), Notas: addNota(p.Notas, 'Mensaje', a) };
+  if (p.Msg_Hoy !== undefined) f.Msg_Hoy = null;
+  if (p.Accion_Hoy !== undefined) f.Accion_Hoy = null;
+  if (!p.Estado || p.Estado === 'Nuevo') { f.Estado = 'Contactado'; f.Proximo_Followup = addDays(3); }
+  else if (a === 'Seguimiento 1') f.Proximo_Followup = addDays(4);
+  else if (a === 'Cierre amable') { f.Estado = 'Frio'; f.Proximo_Followup = null; }
+  else f.Proximo_Followup = addDays(3);
+  await savePros(id, f); toast('✓ Hecho. Próximo contacto: ' + (f.Proximo_Followup ? fmtD(f.Proximo_Followup) : 'ninguno')); render();
+}
+async function moveTo(id, estado) {
+  const p = store.prospectos.find(x => x.id === id); if (!p || p.Estado === estado) return;
+  const f = { Estado: estado };
+  if (!ACTIVOS.includes(estado)) { if (p.Proximo_Followup) f.Proximo_Followup = null; }
+  else if (!ACTIVOS.includes(p.Estado || 'Nuevo') || !p.Proximo_Followup) f.Proximo_Followup = addDays(2);
+  await savePros(id, f); render(); toast('Movido a ' + estInfo(estado).l);
+  if (estado === 'Ganado' && !store.clientes.some(c => (c.Negocio || '').toLowerCase() === (p.Nombre || '').toLowerCase()) && confirm('¡Ganado! ¿Crear la ficha de cliente de «' + p.Nombre + '»?')) await crearCliente(p);
+}
+async function crearCliente(p) {
+  const f = { Negocio: p.Nombre, Estado: 'Onboarding', Fecha_Inicio: hoy(), Fecha_Entrega: addDays(7), Proximo_Cobro: addDays(30), Pago: 'Pendiente', Tareas: defaultTasks(p.Producto) };
+  ['Email', 'Telefono', 'Ciudad', 'Producto'].forEach(k => { if (p[k]) f[k] = p[k]; });
+  const r = await call('POST', 'Clientes', { body: { fields: f } }); store.clientes.push(norm(r)); toast('Cliente creado en Clientes'); render();
+}
+
+/* ============ UI base ============ */
+function toast(msg, type) { const d = document.createElement('div'); if (type) d.className = type; d.textContent = msg; $('#toast').appendChild(d); setTimeout(() => d.remove(), type ? 5000 : 2600); }
+async function run(fn) { try { await fn(); } catch (e) { if (e.auth) { logout('Contraseña incorrecta'); return; } toast(e.message || 'Error', 'err'); } }
+const modal = html => { $('#modal').innerHTML = '<div class="ov" data-ov="1"><div class="sheet">' + html + '</div></div>'; };
+const closeModal = () => { $('#modal').innerHTML = ''; };
+const navHTML = (cls) => NAV.map(n => `<a class="${state.view === n[0] ? 'on' : ''}" data-a="nav" data-v="${n[0]}"><svg class="i" viewBox="0 0 24 24">${n[2]}</svg><span>${n[1]}</span></a>`).join('');
+function go(v) { state.view = v; if (location.hash !== '#' + v) history.replaceState(null, '', '#' + v); render(); window.scrollTo(0, 0); }
+function render() {
+  $('#navSide').innerHTML = navHTML(); $('#navBottom').innerHTML = navHTML(); $('#navBottom').hidden = false;
+  $('#meName').textContent = (localStorage.getItem('crm_name') || 'Usuario') + (store.demo ? ' · demo' : '');
+  const v = { inicio: vInicio, leads: vLeads, tablero: vTablero, clientes: vClientes, agenda: vAgenda, informes: vInformes }[state.view] || vInicio;
+  $('#main').innerHTML = (store.demo ? '<div class="demo-b">Modo demo: datos de ejemplo guardados solo en este navegador. Puedes borrarlos desde Informes.</div>' : '') + v();
+}
+
+/* ============ vistas ============ */
+function tocaCard(p) {
+  const msg = p.Msg_Hoy || p.Msg_WhatsApp || '', c = dueCls(p.Proximo_Followup);
+  return `<div class="toca ${c}"><div class="t-h"><div><b>${esc(p.Nombre)}</b><small>${esc(p.Accion_Hoy || accionDe(p))} · ${esc([p.Categoria, p.Ciudad].filter(Boolean).join(' · '))}</small></div><span class="due ${c}">${dueLbl(p.Proximo_Followup)}</span></div>${msg ? `<p class="msg">${esc(msg)}</p>` : ''}<div class="t-a">${p.Telefono ? `<a class="btn wa sm" target="_blank" rel="noopener" href="${waLink(p.Telefono, msg)}">WhatsApp</a>` : ''}<button class="btn gold sm" data-a="hecho" data-id="${p.id}">✓ Hecho</button><button class="btn ghost sm" data-a="openp" data-id="${p.id}">Ver ficha</button></div></div>`;
+}
+function bars(entries, fmt) { fmt = fmt || (v => v); const max = Math.max(1, ...entries.map(e => e[1])); return entries.map(e => `<div class="bar"><span class="b-l">${esc(e[0])}</span><div class="b-t"><i style="width:${e[1] / max * 100}%"></i></div><span class="b-v">${fmt(e[1])}</span></div>`).join('') || '<div class="empty">Sin datos todavía</div>'; }
+const countBy = (arr, fn) => { const m = {}; arr.forEach(x => { const k = fn(x) || 'Sin dato'; m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+function lastMonths(n) { const out = [], d = new Date(); d.setDate(1); for (let i = n - 1; i >= 0; i--) { const x = new Date(d.getFullYear(), d.getMonth() - i, 1); out.push({ key: iso(x).slice(0, 7), label: x.toLocaleDateString('es-ES', { month: 'short' }) }); } return out; }
+
+function vInicio() {
+  const P = store.prospectos, C = store.clientes, mes = hoy().slice(0, 7), toca = tocaHoy();
+  const mrr = C.filter(c => c.Estado === 'Activo').reduce((s, c) => s + (+c.Mensualidad || 0), 0);
+  const cerrado = C.filter(c => (c.Fecha_Inicio || '').startsWith(mes)).reduce((s, c) => s + (+c.Setup || 0), 0);
+  const g = P.filter(p => p.Estado === 'Ganado').length, l = P.filter(p => p.Estado === 'Perdido' || p.Estado === 'Frio').length;
+  const h = new Date().getHours(), saludo = h < 13 ? 'Buenos días' : h < 21 ? 'Buenas tardes' : 'Buenas noches';
+  const fecha = new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  const meses = lastMonths(6).map(m => [m.label, C.filter(c => (c.Fecha_Inicio || '').startsWith(m.key)).length]);
+  return `<div class="head"><div><h1>${saludo}${localStorage.getItem('crm_name') ? ', ' + esc(localStorage.getItem('crm_name')) : ''}</h1><div class="sub">${fecha.charAt(0).toUpperCase() + fecha.slice(1)}</div></div><button class="btn gold" data-a="newp">+ Nuevo lead</button></div>
+  <div class="kpis"><div class="card kpi gold"><small>Ingreso mensual (MRR)</small><b>${eur(mrr)}</b></div><div class="card kpi"><small>Cerrado este mes</small><b>${eur(cerrado)}</b></div><div class="card kpi"><small>Clientes activos</small><b>${C.filter(c => c.Estado === 'Activo').length}</b></div><div class="card kpi"><small>Leads en curso</small><b>${P.filter(p => ACTIVOS.includes(p.Estado || 'Nuevo')).length}</b></div><div class="card kpi"><small>Tasa de cierre</small><b>${g + l ? Math.round(g / (g + l) * 100) + ' %' : '—'}</b></div></div>
+  <div class="cols"><div><div class="sec-h"><h2>Hoy tengo que contactar a… (${toca.length})</h2></div>${toca.length ? toca.slice(0, 10).map(tocaCard).join('') + (toca.length > 10 ? `<button class="btn ghost" data-a="nav" data-v="agenda">Ver los ${toca.length} en Agenda</button>` : '') : '<div class="card empty">🎉 Nada pendiente para hoy.</div>'}</div>
+  <div><div class="card" style="margin-bottom:14px"><h3>Clientes nuevos por mes</h3>${bars(meses)}</div><div class="card"><h3>Leads por origen</h3>${bars(countBy(P, p => p.Origen).slice(0, 6))}</div></div></div>`;
+}
+
+function filtered() {
+  const f = state.f, q = f.q.toLowerCase();
+  return store.prospectos.filter(p => (!f.estado || (p.Estado || 'Nuevo') === f.estado) && (!f.producto || p.Producto === f.producto) && (!f.origen || p.Origen === f.origen) && (!q || [p.Nombre, p.Telefono, p.Email, p.Categoria, p.Ciudad].join(' ').toLowerCase().includes(q)))
+    .sort((a, b) => (a.Proximo_Followup || '9999').localeCompare(b.Proximo_Followup || '9999'));
+}
+function leadsList() {
+  const L = filtered(); if (!L.length) return '<div class="empty">Sin resultados</div>';
+  return L.slice(0, 300).map(p => `<div class="item" data-a="openp" data-id="${p.id}"><div class="i-main"><b>${esc(p.Nombre)}</b><small>${esc([p.Categoria, p.Ciudad].filter(Boolean).join(' · ') || p.Telefono || '')}</small></div>${chip(p.Estado)}${p.Producto ? `<span class="tag">${esc(p.Producto)}</span>` : ''}<span class="due ${dueCls(p.Proximo_Followup)}">${ACTIVOS.includes(p.Estado || 'Nuevo') ? dueLbl(p.Proximo_Followup) : ''}</span>${p.Telefono ? `<a class="btn wa sm" target="_blank" rel="noopener" href="${waLink(p.Telefono, p.Msg_Hoy || p.Msg_WhatsApp)}">WhatsApp</a>` : ''}</div>`).join('');
+}
+function opts(list, cur, all) { return (all ? `<option value="">${all}</option>` : '') + list.map(o => { const v = Array.isArray(o) ? o[0] : o, l = Array.isArray(o) ? o[1] : o; return `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(l)}</option>`; }).join(''); }
+function vLeads() {
+  const orig = [...new Set(store.prospectos.map(p => p.Origen).filter(Boolean))];
+  return `<div class="head"><div><h1>Leads</h1><div class="sub">${store.prospectos.length} en total</div></div><div style="display:flex;gap:8px"><button class="btn" data-a="importcsv">Importar CSV</button><button class="btn gold" data-a="newp">+ Nuevo lead</button></div></div>
+  <div class="toolbar"><input data-in="q" placeholder="Buscar por nombre, teléfono, ciudad…" value="${esc(state.f.q)}"><select data-ch="filter" data-name="estado">${opts(ESTADOS.map(e => [e.k, e.l]), state.f.estado, 'Todas las etapas')}</select><select data-ch="filter" data-name="producto">${opts(PRODUCTOS, state.f.producto, 'Todos los servicios')}</select><select data-ch="filter" data-name="origen">${opts(orig, state.f.origen, 'Todos los orígenes')}</select></div><div id="leadsList">${leadsList()}</div>`;
+}
+
+function kcard(p) {
+  return `<div class="kcard ${ACTIVOS.includes(p.Estado || 'Nuevo') ? dueCls(p.Proximo_Followup) : ''}" draggable="true" data-id="${p.id}" data-a="openp"><b>${esc(p.Nombre)}</b><small>${esc([p.Categoria, p.Ciudad].filter(Boolean).join(' · '))}</small><div class="row"><span class="due ${dueCls(p.Proximo_Followup)}">${ACTIVOS.includes(p.Estado || 'Nuevo') ? dueLbl(p.Proximo_Followup) : ''}</span>${p.Producto ? `<span class="tag">${esc(p.Producto)}</span>` : ''}</div><div class="row"><select data-ch="move" data-id="${p.id}" aria-label="Mover a">${opts(ESTADOS.map(e => [e.k, e.l]), p.Estado || 'Nuevo')}</select>${p.Telefono ? `<a class="btn wa sm" target="_blank" rel="noopener" href="${waLink(p.Telefono, p.Msg_Hoy || p.Msg_WhatsApp)}">WA</a>` : ''}</div></div>`;
+}
+function vTablero() {
+  const cols = ESTADOS.map(e => { const L = store.prospectos.filter(p => (p.Estado || 'Nuevo') === e.k); return `<div class="kcol" data-k="${e.k}"><div class="k-h"><span style="color:${e.c}">● ${esc(e.l)}</span><span class="n">${L.length}</span></div>${L.map(kcard).join('') || '<div class="empty" style="padding:14px">—</div>'}</div>`; }).join('');
+  return `<div class="head"><div><h1>Tablero</h1><div class="sub">Arrastra las tarjetas entre columnas (en móvil usa el selector de cada tarjeta). Rojo = atrasado, dorado = hoy.</div></div><button class="btn gold" data-a="newp">+ Nuevo lead</button></div><div class="board">${cols}</div>`;
+}
+
+function cliCard(c) {
+  const tk = tasksOf(c.Tareas), done = tk.filter(x => x.d).length, pct = tk.length ? Math.round(done / tk.length * 100) : 0;
+  return `<div class="card cli" data-a="openc" data-id="${c.id}"><div class="c-h"><b>${esc(c.Negocio)}</b>${cChip(c.Estado)}</div><small class="muted">${esc([c.Producto, c.Ciudad].filter(Boolean).join(' · '))}</small><div class="prog"><i style="width:${pct}%"></i></div><div class="c-m"><span>${tk.length ? done + '/' + tk.length + ' tareas · ' + pct + ' %' : 'Sin tareas'}</span><span>Entrega: ${fmtD(c.Fecha_Entrega)}</span></div><div class="c-f"><span>${eur(c.Setup)} + ${eur(c.Mensualidad)}/mes</span>${pChip(c.Pago)}</div>${c.Proximo_Cobro ? `<small class="muted">Próximo cobro: ${fmtD(c.Proximo_Cobro)}</small>` : ''}</div>`;
+}
+function vClientes() {
+  const C = store.clientes, mrr = C.filter(c => c.Estado === 'Activo').reduce((s, c) => s + (+c.Mensualidad || 0), 0), pend = C.filter(c => c.Pago && c.Pago !== 'Pagado').length;
+  return `<div class="head"><div><h1>Clientes y proyectos</h1><div class="sub">${C.length} clientes · ${eur(mrr)}/mes activos · ${pend} con pago pendiente</div></div><button class="btn gold" data-a="newc">+ Nuevo cliente</button></div><div class="grid">${C.map(cliCard).join('') || '<div class="card empty">Aún no hay clientes. Cuando muevas un lead a «Ganado» se crea la ficha.</div>'}</div>`;
+}
+
+function vAgenda() {
+  const items = [];
+  store.prospectos.filter(p => ACTIVOS.includes(p.Estado || 'Nuevo') && p.Proximo_Followup).forEach(p => items.push({ f: p.Proximo_Followup, t: p.Nombre, s: 'Contactar · ' + (p.Accion_Hoy || accionDe(p)), a: 'openp', id: p.id }));
+  store.clientes.filter(c => c.Estado === 'Activo' && c.Proximo_Cobro).forEach(c => items.push({ f: c.Proximo_Cobro, t: c.Negocio, s: 'Cobro · ' + eur(c.Mensualidad), a: 'openc', id: c.id }));
+  items.sort((a, b) => a.f.localeCompare(b.f));
+  const G = [['Atrasado', x => dd(x.f) < 0], ['Hoy', x => dd(x.f) === 0], ['Mañana', x => dd(x.f) === 1], ['Esta semana', x => dd(x.f) > 1 && dd(x.f) <= 7], ['Más adelante', x => dd(x.f) > 7]];
+  const out = G.map(g => { const L = items.filter(g[1]); return L.length ? `<div class="grp"><h3>${g[0]} <span class="tag">${L.length}</span></h3>${L.map(x => `<div class="item" data-a="${x.a}" data-id="${x.id}"><div class="i-main"><b>${esc(x.t)}</b><small>${esc(x.s)}</small></div><span class="due ${dueCls(x.f)}">${fmtD(x.f)}</span></div>`).join('')}</div>` : ''; }).join('');
+  return `<div class="head"><div><h1>Agenda</h1><div class="sub">Próximos contactos y cobros</div></div></div>${out || '<div class="card empty">Sin nada programado.</div>'}`;
+}
+
+function vInformes() {
+  const P = store.prospectos, C = store.clientes;
+  const embudo = ESTADOS.map(e => [e.l, P.filter(p => (p.Estado || 'Nuevo') === e.k).length]);
+  const meses = lastMonths(6).map(m => [m.label, C.filter(c => (c.Fecha_Inicio || '').startsWith(m.key)).reduce((s, c) => s + (+c.Setup || 0), 0)]);
+  return `<div class="head"><div><h1>Informes</h1><div class="sub">Visión general del negocio</div></div></div>
+  <div class="cols"><div class="card"><h3>Embudo de ventas</h3>${bars(embudo)}</div><div class="card"><h3>Instalaciones cobradas por mes</h3>${bars(meses, eur)}</div></div>
+  <div class="cols" style="margin-top:18px"><div class="card"><h3>Leads por origen</h3>${bars(countBy(P, p => p.Origen))}</div><div class="card"><h3>Leads por servicio</h3>${bars(countBy(P, p => p.Producto))}</div></div>
+  <div class="card" style="margin-top:18px"><h3 style="margin-bottom:10px">Datos</h3><div class="actions" style="margin:0"><button class="btn" data-a="csvp">Exportar leads (CSV)</button><button class="btn" data-a="csvc">Exportar clientes (CSV)</button><button class="btn" data-a="backup">Copia de seguridad (JSON)</button><button class="btn" data-a="importcsv">Importar leads (CSV)</button></div><p class="sub" style="margin-top:10px">Tus datos viven en Airtable: ahí ya tienes la copia principal. Estas descargas son un extra.</p>
+  ${store.demo ? '<div class="actions"><button class="btn danger" data-a="democlear">Borrar datos de ejemplo y empezar de cero</button><button class="btn" data-a="demoreset">Restaurar ejemplos</button><button class="btn" data-a="logout">Salir del demo</button></div>' : ''}</div>`;
+}
+
+/* ============ fichas ============ */
+const fInput = (n, l, v, t, x) => `<label class="fld"><span>${l}</span><input name="${n}" type="${t || 'text'}" value="${esc(v)}" ${x || ''}></label>`;
+const fSelect = (n, l, v, list) => { if (v && !list.some(o => (Array.isArray(o) ? o[0] : o) === v)) list = list.concat([v]); return `<label class="fld"><span>${l}</span><select name="${n}">${opts(list, v || '')}</select></label>`; };
+const fText = (n, l, v, r) => `<label class="fld"><span>${l}</span><textarea name="${n}" rows="${r || 3}">${esc(v)}</textarea></label>`;
+const histHTML = p => { const L = String(p.Notas || '').split('\n').filter(Boolean); return L.length ? L.map(l => `<li>${esc(l)}</li>`).join('') : '<li class="muted">Sin historial todavía</li>'; };
+
+function openPros(id) {
+  const p = id ? store.prospectos.find(x => x.id === id) : { Estado: 'Nuevo', Proximo_Followup: hoy(), Origen: 'Manual' }; if (!p) return;
+  const msg = p.Msg_Hoy || p.Msg_WhatsApp || '';
+  modal(`<form data-form="pros" data-id="${id || ''}"><div class="sh-h"><div><h2>${id ? esc(p.Nombre) : 'Nuevo lead'}</h2>${id ? chip(p.Estado) : ''}</div><button type="button" class="x" data-a="close">✕</button></div>
+  <div class="grid2">${fInput('Nombre', 'Nombre / negocio', p.Nombre, 'text', 'required')}${fInput('Telefono', 'Teléfono', p.Telefono, 'tel')}${fInput('Email', 'Email', p.Email, 'email')}${fInput('Web', 'Web', p.Web)}${fInput('Categoria', 'Tipo de negocio', p.Categoria)}${fInput('Ciudad', 'Ciudad', p.Ciudad)}${fSelect('Producto', 'Servicio', p.Producto, ['', ...PRODUCTOS])}${fSelect('Origen', 'Origen', p.Origen, ORIGENES)}${fSelect('Estado', 'Etapa', p.Estado || 'Nuevo', ESTADOS.map(e => [e.k, e.l]))}${fInput('Proximo_Followup', 'Próximo contacto', p.Proximo_Followup, 'date')}</div>
+  ${fText('Msg_WhatsApp', 'Mensaje de WhatsApp preparado', p.Msg_WhatsApp, 4)}
+  <div class="actions"><button class="btn gold" type="submit">Guardar</button>${id && p.Telefono ? `<a class="btn wa" target="_blank" rel="noopener" href="${waLink(p.Telefono, msg)}">WhatsApp</a>` : ''}${id && ACTIVOS.includes(p.Estado || 'Nuevo') ? `<button class="btn" type="button" data-a="hecho" data-id="${id}">✓ Marcar contactado</button>` : ''}${id ? `<button class="btn danger" type="button" data-a="delp" data-id="${id}">Eliminar</button>` : ''}</div></form>
+  ${id ? `<div class="hist"><h3>Historial</h3><div class="add" style="margin-top:10px"><select id="notaTipo"><option>Llamada</option><option>Mensaje</option><option>Reunión</option><option>Nota</option></select><input id="notaTxt" placeholder="Resumen breve…"><button class="btn sm" data-a="addnota" data-id="${id}">Añadir</button></div><ul id="hist">${histHTML(p)}</ul></div>` : ''}`);
+}
+async function submitPros(form) {
+  const id = form.dataset.id, fd = new FormData(form), f = {};
+  ['Nombre', 'Telefono', 'Email', 'Web', 'Categoria', 'Ciudad', 'Producto', 'Origen', 'Estado', 'Proximo_Followup', 'Msg_WhatsApp'].forEach(k => { let v = String(fd.get(k) || '').trim(); if (k === 'Telefono') v = normTel(v); if (k === 'Email') v = v.toLowerCase(); f[k] = v; });
+  if (!id) { Object.keys(f).forEach(k => { if (f[k] === '') delete f[k]; }); f.Fecha_Alta = hoy(); f.Contactos = 0; const r = await call('POST', 'Prospectos', { body: { fields: f } }); store.prospectos.push(norm(r)); }
+  else { Object.keys(f).forEach(k => { if (f[k] === '') f[k] = null; }); await savePros(id, f); }
+  closeModal(); render(); toast('Guardado');
+}
+function openCli(id) {
+  const c = id ? store.clientes.find(x => x.id === id) : { Estado: 'Onboarding', Pago: 'Pendiente', Fecha_Inicio: hoy() }; if (!c) return;
+  modal(`<form data-form="cli" data-id="${id || ''}"><div class="sh-h"><div><h2>${id ? esc(c.Negocio) : 'Nuevo cliente'}</h2>${id ? cChip(c.Estado) : ''}</div><button type="button" class="x" data-a="close">✕</button></div>
+  <div class="grid2">${fInput('Negocio', 'Negocio', c.Negocio, 'text', 'required')}${fInput('Contacto', 'Persona de contacto', c.Contacto)}${fInput('Telefono', 'Teléfono', c.Telefono, 'tel')}${fInput('Email', 'Email', c.Email, 'email')}${fInput('Ciudad', 'Ciudad', c.Ciudad)}${fSelect('Producto', 'Servicio', c.Producto, ['', ...PRODUCTOS])}${fSelect('Estado', 'Estado', c.Estado, ESTADOS_CLI)}${fSelect('Pago', 'Pago', c.Pago || 'Pendiente', PAGOS)}${fInput('Setup', 'Instalación (€)', c.Setup, 'number', 'step="0.01"')}${fInput('Mensualidad', 'Mensualidad (€)', c.Mensualidad, 'number', 'step="0.01"')}${fInput('Fecha_Inicio', 'Inicio', c.Fecha_Inicio, 'date')}${fInput('Fecha_Entrega', 'Entrega', c.Fecha_Entrega, 'date')}${fInput('Proximo_Cobro', 'Próximo cobro', c.Proximo_Cobro, 'date')}${fInput('Drive_URL', 'Carpeta de Drive', c.Drive_URL)}</div>
+  ${fText('Notas', 'Notas', c.Notas, 3)}
+  <div class="actions"><button class="btn gold" type="submit">Guardar</button>${id && c.Telefono ? `<a class="btn wa" target="_blank" rel="noopener" href="${waLink(c.Telefono)}">WhatsApp</a>` : ''}${id && c.Drive_URL ? `<a class="btn" target="_blank" rel="noopener" href="${esc(c.Drive_URL)}">Abrir Drive</a>` : ''}${id && c.System_Prompt ? `<button class="btn" type="button" data-a="copyprompt" data-id="${id}">Copiar prompt del asistente</button>` : ''}${id ? `<button class="btn danger" type="button" data-a="delc" data-id="${id}">Eliminar</button>` : ''}</div></form>
+  ${id ? `<div class="hist"><h3>Tareas del proyecto <span class="muted" id="tprog"></span></h3><div id="tasks" style="margin-top:8px"></div><div class="add" style="margin-top:8px"><input id="taskTxt" placeholder="Nueva tarea…"><button class="btn sm" data-a="addtask" data-id="${id}">Añadir</button></div>${c.Material_Pendiente ? `<h3 style="margin-top:18px">Material a pedir al cliente</h3><p class="msg">${esc(c.Material_Pendiente)}</p>` : ''}</div>` : ''}`);
+  if (id) paintTasks(id);
+}
+function paintTasks(id) {
+  const c = store.clientes.find(x => x.id === id), tk = tasksOf(c.Tareas), el = $('#tasks'); if (!el) return;
+  el.innerHTML = tk.map((t, i) => `<label class="task ${t.d ? 'done' : ''}"><input type="checkbox" data-ch="task" data-id="${id}" data-i="${i}" ${t.d ? 'checked' : ''}><span>${esc(t.t)}</span></label>`).join('') || '<div class="muted">Sin tareas</div>';
+  $('#tprog').textContent = tk.length ? '· ' + Math.round(tk.filter(x => x.d).length / tk.length * 100) + ' %' : '';
+}
+async function submitCli(form) {
+  const id = form.dataset.id, fd = new FormData(form), f = {};
+  ['Negocio', 'Contacto', 'Telefono', 'Email', 'Ciudad', 'Producto', 'Estado', 'Pago', 'Fecha_Inicio', 'Fecha_Entrega', 'Proximo_Cobro', 'Drive_URL', 'Notas'].forEach(k => { let v = String(fd.get(k) || '').trim(); if (k === 'Telefono') v = normTel(v); if (k === 'Email') v = v.toLowerCase(); f[k] = v; });
+  f.Setup = num(fd.get('Setup')); f.Mensualidad = num(fd.get('Mensualidad'));
+  if (!id) { Object.keys(f).forEach(k => { if (f[k] === '' || f[k] === null) delete f[k]; }); f.Tareas = defaultTasks(f.Producto); const r = await call('POST', 'Clientes', { body: { fields: f } }); store.clientes.push(norm(r)); }
+  else { Object.keys(f).forEach(k => { if (f[k] === '') f[k] = null; }); await saveCli(id, f); }
+  closeModal(); render(); toast('Guardado');
+}
+
+/* ============ CSV ============ */
+function toCSV(rows, cols) { const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; return '\uFEFF' + [cols.join(';')].concat(rows.map(r => cols.map(c => q(r[c])).join(';'))).join('\r\n'); }
+function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type || 'text/csv;charset=utf-8' })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); }
+function parseCSV(text) {
+  text = text.replace(/^\uFEFF/, ''); const first = text.split(/\r?\n/)[0], delim = first.split(';').length > first.split(',').length ? ';' : ',';
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < text.length; i++) { const ch = text[i];
+    if (q) { if (ch === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+    else if (ch === '"') q = true; else if (ch === delim) { row.push(cur); cur = ''; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cur); cur = ''; rows.push(row); row = []; } else cur += ch; }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim() !== ''));
+}
+async function importCSV(text) {
+  const rows = parseCSV(text); if (rows.length < 2) { toast('El CSV está vacío', 'err'); return; }
+  const H = rows[0].map(h => h.trim().toLowerCase()), col = names => H.findIndex(h => names.includes(h));
+  const ix = { n: col(['nombre', 'title', 'name', 'negocio']), t: col(['telefono', 'teléfono', 'phone', 'phoneunformatted', 'tel']), e: col(['email', 'correo']), w: col(['web', 'website']), d: col(['direccion', 'dirección', 'address']), c: col(['categoria', 'categoría', 'categoryname', 'category']), ci: col(['ciudad', 'city']), r: col(['rating', 'totalscore']) };
+  if (ix.n < 0) { toast('No encuentro la columna «nombre» (o «title») en el CSV', 'err'); return; }
+  const seen = new Set(store.prospectos.flatMap(p => [p.Telefono, (p.Email || '').toLowerCase()].filter(Boolean))), leads = [];
+  rows.slice(1).forEach(r => { const g = i => i < 0 ? '' : String(r[i] || '').trim(), f = { Nombre: g(ix.n), Telefono: normTel(g(ix.t)), Email: g(ix.e).toLowerCase(), Web: g(ix.w), Direccion: g(ix.d), Categoria: g(ix.c), Ciudad: g(ix.ci) };
+    if (!f.Nombre || (!f.Telefono && !f.Email)) return; const k = f.Telefono || f.Email; if (seen.has(f.Telefono) || seen.has(f.Email) || seen.has(k)) return; seen.add(k);
+    const rt = parseFloat(g(ix.r)); if (!isNaN(rt)) f.Rating = rt; Object.keys(f).forEach(x => { if (f[x] === '') delete f[x]; });
+    Object.assign(f, { Estado: 'Nuevo', Origen: 'CSV', Fecha_Alta: hoy(), Proximo_Followup: hoy(), Contactos: 0 }); leads.push({ fields: f }); });
+  if (!leads.length) { toast('No hay leads nuevos (todos duplicados o sin teléfono/email)'); return; }
+  if (!confirm('Se importarán ' + leads.length + ' leads nuevos. ¿Continuar?')) return;
+  for (let i = 0; i < leads.length; i += 10) { const r = await call('POST', 'Prospectos', { body: { records: leads.slice(i, i + 10) } }); store.prospectos.push(...r.records.map(norm)); }
+  toast('✓ ' + leads.length + ' leads importados'); render();
+}
+
+/* ============ acciones ============ */
+const A = {
+  nav: t => go(t.dataset.v), close: () => closeModal(),
+  newp: () => openPros(null), openp: t => openPros(t.dataset.id), newc: () => openCli(null), openc: t => openCli(t.dataset.id),
+  hecho: t => run(async () => { await hecho(t.dataset.id); closeModal(); }),
+  delp: t => run(async () => { if (!confirm('¿Eliminar este lead?')) return; await call('DELETE', 'Prospectos', { id: t.dataset.id }); store.prospectos = store.prospectos.filter(x => x.id !== t.dataset.id); closeModal(); render(); toast('Eliminado'); }),
+  delc: t => run(async () => { if (!confirm('¿Eliminar este cliente?')) return; await call('DELETE', 'Clientes', { id: t.dataset.id }); store.clientes = store.clientes.filter(x => x.id !== t.dataset.id); closeModal(); render(); toast('Eliminado'); }),
+  addnota: t => run(async () => { const txt = $('#notaTxt').value.trim(); if (!txt) { toast('Escribe un resumen', 'err'); return; } const p = store.prospectos.find(x => x.id === t.dataset.id), np = await savePros(p.id, { Notas: addNota(p.Notas, $('#notaTipo').value, txt) }); $('#notaTxt').value = ''; $('#hist').innerHTML = histHTML(np); }),
+  addtask: t => run(async () => { const txt = $('#taskTxt').value.trim(); if (!txt) return; const c = store.clientes.find(x => x.id === t.dataset.id), tk = tasksOf(c.Tareas); tk.push({ d: false, t: txt }); await saveCli(c.id, { Tareas: tasksStr(tk) }); $('#taskTxt').value = ''; paintTasks(c.id); render(); }),
+  copyprompt: t => { const c = store.clientes.find(x => x.id === t.dataset.id); navigator.clipboard.writeText(c.System_Prompt || '').then(() => toast('Prompt copiado')); },
+  importcsv: () => $('#csvIn').click(),
+  csvp: () => download('leads-marteo-' + hoy() + '.csv', toCSV(store.prospectos, ['Nombre', 'Telefono', 'Email', 'Web', 'Direccion', 'Categoria', 'Ciudad', 'Producto', 'Origen', 'Estado', 'Contactos', 'Fecha_Alta', 'Ultimo_Contacto', 'Proximo_Followup', 'Notas'])),
+  csvc: () => download('clientes-marteo-' + hoy() + '.csv', toCSV(store.clientes, ['Negocio', 'Contacto', 'Email', 'Telefono', 'Ciudad', 'Producto', 'Estado', 'Setup', 'Mensualidad', 'Pago', 'Fecha_Inicio', 'Fecha_Entrega', 'Proximo_Cobro', 'Drive_URL', 'Notas'])),
+  backup: () => download('backup-marteo-' + hoy() + '.json', JSON.stringify({ fecha: hoy(), prospectos: store.prospectos, clientes: store.clientes }, null, 2), 'application/json'),
+  demo: () => { sessionStorage.setItem('crm_demo', '1'); store.demo = true; start(); },
+  democlear: () => { if (confirm('¿Borrar todos los datos de ejemplo?')) { demoSave({ Prospectos: [], Clientes: [] }); run(async () => { await loadAll(); render(); }); } },
+  demoreset: () => { demoSave(demoSeed()); run(async () => { await loadAll(); render(); }); },
+  logout: () => logout()
+};
+document.addEventListener('click', e => {
+  const ov = e.target.closest('[data-ov]'); if (ov && e.target === ov) { closeModal(); return; }
+  const t = e.target.closest('[data-a]'); if (!t) return;
+  const inner = e.target.closest('select,input,textarea,a'); if (inner && !inner.dataset.a) return;
+  if (A[t.dataset.a]) A[t.dataset.a](t, e);
+});
+document.addEventListener('change', e => {
+  const t = e.target, k = t.dataset.ch;
+  if (k === 'filter') { state.f[t.dataset.name] = t.value; $('#leadsList').innerHTML = leadsList(); }
+  else if (k === 'move') run(() => moveTo(t.dataset.id, t.value));
+  else if (k === 'task') run(async () => { const c = store.clientes.find(x => x.id === t.dataset.id), tk = tasksOf(c.Tareas); tk[+t.dataset.i].d = t.checked; await saveCli(c.id, { Tareas: tasksStr(tk) }); paintTasks(c.id); render(); });
+  else if (t.id === 'csvIn' && t.files[0]) { const fr = new FileReader(); fr.onload = () => run(() => importCSV(String(fr.result))); fr.readAsText(t.files[0]); t.value = ''; }
+});
+document.addEventListener('input', e => { if (e.target.dataset.in === 'q') { state.f.q = e.target.value; $('#leadsList').innerHTML = leadsList(); } });
+document.addEventListener('submit', e => { e.preventDefault(); const f = e.target; if (f.dataset.form === 'pros') run(() => submitPros(f)); else if (f.dataset.form === 'cli') run(() => submitCli(f)); else if (f.id === 'loginForm') doLogin(f); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+let dragId = null;
+document.addEventListener('dragstart', e => { const c = e.target.closest && e.target.closest('.kcard'); if (!c) return; dragId = c.dataset.id; c.classList.add('drag'); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', dragId); });
+document.addEventListener('dragend', e => { const c = e.target.closest && e.target.closest('.kcard'); if (c) c.classList.remove('drag'); document.querySelectorAll('.kcol.over').forEach(x => x.classList.remove('over')); });
+document.addEventListener('dragover', e => { const c = e.target.closest && e.target.closest('.kcol'); if (c) { e.preventDefault(); document.querySelectorAll('.kcol.over').forEach(x => x.classList.remove('over')); c.classList.add('over'); } });
+document.addEventListener('drop', e => { const c = e.target.closest && e.target.closest('.kcol'); if (!c) return; e.preventDefault(); const id = dragId || e.dataTransfer.getData('text/plain'); dragId = null; run(() => moveTo(id, c.dataset.k)); });
+window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (NAV.some(n => n[0] === v) && v !== state.view && !$('#app').hidden) { state.view = v; render(); } });
+
+/* ============ sesión ============ */
+function showLogin(msg) { $('#app').hidden = true; $('#navBottom').hidden = true; $('#login').hidden = false; const e = $('#loginErr'); e.hidden = !msg; e.textContent = msg || ''; $('#loginForm [name=nombre]').value = localStorage.getItem('crm_name') || ''; }
+function logout(msg) { localStorage.removeItem('crm_key'); sessionStorage.removeItem('crm_demo'); store.key = ''; store.demo = false; showLogin(msg); }
+async function doLogin(f) {
+  const fd = new FormData(f); store.key = String(fd.get('pw') || ''); localStorage.setItem('crm_name', String(fd.get('nombre') || '').trim());
+  try { await start(); localStorage.setItem('crm_key', store.key); } catch (e) { store.key = ''; showLogin(e.auth ? 'Contraseña incorrecta' : 'No puedo conectar: ' + e.message); }
+}
+async function start() {
+  await loadAll(); $('#login').hidden = true; $('#app').hidden = false;
+  const v = location.hash.slice(1); state.view = NAV.some(n => n[0] === v) ? v : 'inicio'; render();
+}
+(async function boot() {
+  if (sessionStorage.getItem('crm_demo') || /[?&]demo/.test(location.search)) { sessionStorage.setItem('crm_demo', '1'); store.demo = true; }
+  if (store.demo || store.key) { try { await start(); return; } catch (e) { store.demo = false; showLogin(e.auth ? 'Contraseña incorrecta' : 'No puedo conectar: ' + e.message); return; } }
+  showLogin();
+})();
+</script>
+</body>
+</html>
